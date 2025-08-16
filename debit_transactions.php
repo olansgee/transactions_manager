@@ -33,7 +33,7 @@ $total_debit = $total_debit_row['Amount'];
 					<a href="loan_repayment_summary.php">Loan Repayment Summary</a>
 				</p>
 				<p><a href='index.php'>Home</a><br></p>
-				<table class="table table-hover table-responsive-sm tbl" style=" margin-left: auto; margin-right: auto; font-size: 12px;">
+				<table class="table table-hover table-responsive-sm table-striped table-bordered tbl">
 			    <thead>
 			      <tr>
 			        <th>No</th>
