@@ -1,24 +1,39 @@
 <?php session_start();
-require_once("mysqli_connect.php");
+require_once("database.php");
+require_once("functions.php");
 
 $transaction_type = $_POST['transaction_type'];
 $description = $_POST['description'];
 $quantity = $_POST['quantity'];
 $rate = $_POST['rate'];
-//$amount = $rate * $quantity;
+$amount = $rate * $quantity;
 $datetime=date('y/m/d h:i:s');
 
+$debit = 0;
+$credit = 0;
 
+if ($transaction_type == 'Credit' || $transaction_type == 'Loan Credit') {
+    $credit = $amount;
+} else {
+    $debit = $amount;
+}
 
-$query = "INSERT INTO transactions (date, description, quantity, rate, amount, type) VALUES ('$datetime', '$description', '$quantity', '$rate', $quantity*$rate, '$transaction_type')";
+$balance = 0; // This will be updated later
 
-$result = mysqli_query($con, $query);
+$query = "INSERT INTO transactions (trans_date, narrations, debit, credit, balance) VALUES (?, ?, ?, ?, ?)";
+
+$stmt = mysqli_prepare($con, $query);
+
+mysqli_stmt_bind_param($stmt, "ssddd", $datetime, $description, $debit, $credit, $balance);
+
+$result = mysqli_stmt_execute($stmt);
+
 
 if (!$result){
 	echo "Data <b>NOT</b> submitted" . mysqli_error($con);
-} 
+}
 else{
-	echo "Data submitted <b>SUCCESSFULLY</b><br>"; 
+	echo "Data submitted <b>SUCCESSFULLY</b><br>";
 	echo "<b><i>Want to submit another record?</i></b> Go right ahead!<br>";
 	echo "<a href='index.php'>Home</a><br>";
 }
@@ -29,7 +44,7 @@ else{
 <html>
 <?php require_once("head.php"); ?>
 <body>
-	
+
 
 	<div class="container-fluid" >
 		<div class="row">
@@ -39,26 +54,26 @@ else{
 				<form name="transaction" method="POST" action="process.php" enctype="multipart/form-data">
 
 					<div class="form-group spaceup">
-				  		<label for="select type of transaction" style="font-style: oblique;"><b>Type of Transaction:</b></label>
-				  		<select name="transaction_type" class="form-control" id="select_transaction">
-				  			<option>Select Type of Transaction </option>
-				    		<option>Credit</option>
-				    		<option>Debit</option>
-				    		<option>Loan  Credit</option>
-				    		<option>Loan  Debit</option>
-				    	</select>
+						<label for="select type of transaction" style="font-style: oblique;"><b>Type of Transaction:</b></label>
+						<select name="transaction_type" class="form-control" id="select_transaction">
+							<option>Select Type of Transaction </option>
+						<option>Credit</option>
+						<option>Debit</option>
+						<option>Loan  Credit</option>
+						<option>Loan  Debit</option>
+					</select>
 					</div>
-				
+
 				   <div class="form-group spaceup">
 				      <label for="description" style="font-style: oblique;"><b>Description:</b></label>
-				     <textarea name="description" class="form-control" rows="5" cols="30" placeholder="Type description" required> </textarea> 
-				 	</div>
-				 	
-				 	<div class="form-group spaceup">
+				     <textarea name="description" class="form-control" rows="5" cols="30" placeholder="Type description" required> </textarea>
+					</div>
+
+					<div class="form-group spaceup">
 				      <label for="Quantity" style="font-style: oblique;"><b>Enter Quantity:</b></label>
 				      <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Type quantity" required>
 				    </div>
-				 
+
 				    <div class="form-group spaceup">
 				      <label for="Rate" style="font-style: oblique;"><b>Enter Rate:</b></label>
 				      <input type="number" class="form-control" id="rate" name="rate" placeholder="Type rate" required>
@@ -70,9 +85,8 @@ else{
 				</div>
 			</div>
 		</div>
-		
+
  <?php require_once("footer.php"); ?>
-	
+
 </body>
 </html>
-
