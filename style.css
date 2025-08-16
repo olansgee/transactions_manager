@@ -1,0 +1,15 @@
+form {width:60%; margin-left: auto; margin-right:auto}
+
+label {font-size: 20px;}
+.profloss {width: 60%; margin-left: auto; margin-right: auto;  }
+
+/*.footer {position: absolute;}*/
+
+@media only screen and (max-width: 725px) {
+      .spaceup {margin-top: 120px;}
+      label {font-size: 24px;}
+      form {width: 92%; margin-left: auto; margin-right:auto}
+     /* .footer {position: absolute; bottom: 0;}*/
+      .tbl {width: 100%;  font-size: 16px;}
+      td.modify {font-weight: bold; width: 50px;}
+}
